@@ -1581,7 +1581,7 @@ function subscribeCloud(){
       if(payload.new && payload.new.value){
         applyCloudState(payload.new.value);
         updateUserBtn(); renderProfileCard(); renderSOTD(); syncThemeInputsFromComputed(); renderAll();
-        saveState(); // keep local cache fresh too
+        saveState(true); // keep local cache fresh too
       }
     })
     .subscribe();
@@ -1594,7 +1594,7 @@ const STORAGE_KEY = 'jadwal-app-state-v1';
 let storageAvailable = true;
 try{ localStorage.setItem('__t','1'); localStorage.removeItem('__t'); }catch(e){ storageAvailable = false; }
 
-function saveState(){
+function saveState(skipCloud = false){
   if(!storageAvailable) return;
   try{
     const state = {
@@ -1604,7 +1604,8 @@ function saveState(){
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }catch(e){ /* quota exceeded or blocked - fail silently */ }
-  pushToCloud();
+  
+  if(!skipCloud) pushToCloud();
 }
 
 function loadState(){
